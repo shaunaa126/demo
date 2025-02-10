@@ -32,6 +32,7 @@ jobs:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
   dependabot-automerge:
+    needs: dependabot-autoapprove
     runs-on: ubuntu-latest
     steps:
       - name: Enable auto-merge for Dependabot PRs
