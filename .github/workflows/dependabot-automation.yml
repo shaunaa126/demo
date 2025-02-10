@@ -23,13 +23,15 @@ jobs:
           GH_TOKEN: ${{secrets.GH_TOKEN}}
       - name: Add a label for all approved dependencies
         if: success()
-        run: gh pr edit "$PR_URL" --add-label "Approved"
+        run: |
+          gh label create "Dependabot-Approved" --color "#0E8A16" || echo "Dependabot-Approved label already exists"
+          gh pr edit "$PR_URL" --add-label "Dependabot-Approved"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
   dependabot-auto-merge:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'Approved')
+    if: contains(github.event.pull_request.labels.*.name, 'Dependabot-Approved')
     steps:
       - name: Dependabot metadata
         id: metadata
