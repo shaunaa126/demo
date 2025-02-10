@@ -24,7 +24,7 @@ jobs:
       - name: Add a label for all approved dependencies
         if: success()
         run: |
-          gh label create "Dependabot-Approved" --color "#0E8A16" || echo "Dependabot-Approved label already exists"
+          gh label create "Dependabot-Approved" --description "Approved by Dependabot Automation" --color "#0E8A16" --repo "${{ github.repository }}" || echo "Dependabot-Approved label already exists"
           gh pr edit "$PR_URL" --add-label "Dependabot-Approved"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
