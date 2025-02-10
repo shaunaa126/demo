@@ -42,3 +42,4 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: "Dependabot-Approved,dependencies"
           MERGE_METHOD: "squash"
+          MERGE_RETRY_SLEEP: 10000
