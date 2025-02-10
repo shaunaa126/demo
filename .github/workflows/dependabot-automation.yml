@@ -33,7 +33,7 @@ jobs:
           GH_TOKEN: ${{secrets.GH_TOKEN}}
   dependabot-auto-merge:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'Dependabot-Approved') && github.event_name == 'check_suite'
+    if: contains(github.event.pull_request.labels.*.name, 'Dependabot-Approved') && github.event.check_suite.conclusion == 'success'
     steps:
       - name: Dependabot metadata
         id: metadata
