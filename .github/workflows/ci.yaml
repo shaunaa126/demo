@@ -12,10 +12,12 @@ jobs:
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - run: echo "PR created by Dependabot"
-      - name: Add a label for all approved dependencies
+      
+      - name: execute auto-merge workflow
+        uses: the-actions-org/workflow-dispatch@v4.0.0
         if: success()
-        run: |
-            gh pr merge "$PR_URL" --auto --squash
-        env:
-            PR_URL: ${{github.event.pull_request.html_url}}
-            GH_TOKEN: ${{secrets.GH_TOKEN}}
+        with:
+          workflow: auto-merge.yaml
+          ref: main
+          token: ${{secrets.GH_TOKEN}}
+          inputs: '{"PR_URL":"${{ github.event.pull_request.html_url }}"}'
