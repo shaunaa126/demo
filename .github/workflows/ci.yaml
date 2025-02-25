@@ -10,6 +10,6 @@ jobs:
   sleep:
     runs-on: ubuntu-latest
     steps:
-      - name: Sleep for 8m
+      - name: Sleep for 4m
         run: |
-          sleep 8m
+          sleep 4m
