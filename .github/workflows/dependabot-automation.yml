@@ -6,6 +6,8 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
+  checks: read
 
 jobs:
   dependabot-autoapprove:
@@ -17,17 +19,24 @@ jobs:
         uses: dependabot/fetch-metadata@v2
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Approve a PR
+      - name: Approve the PR for minor and patch dependencies
+        id: approval
         if: steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch'
-        run: gh pr review --approve "$PR_URL"
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh label create "Dependabot-Approved" --description "Approved by Dependabot Automation" --color "#0E8A16" --repo "${{ github.repository }}" || echo "Dependabot-Approved label already exists"
+          gh pr edit "$PR_URL" --add-label "Dependabot-Approved"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
-      - name: Add a label for all approved dependencies
-        if: success()
+      - name: Check if all checks passed
+        if: ${{ success() && steps.approval.outcome != 'skipped' }}
+        id: checkspassed
+        uses: wechuli/allcheckspassed@v1
+      - name: Enable auto-merge
+        if: ${{ success() && steps.approval.outcome != 'skipped' }}
         run: |
-          gh label create "Dependabot-Approved" --description "Approved by Dependabot Automation" --color "#0E8A16" --repo "${{ github.repository }}" || echo "Dependabot-Approved label already exists"
-          gh pr edit "$PR_URL" --add-label "Dependabot-Approved"
+          gh pr merge "$PR_URL" --auto --squash
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
