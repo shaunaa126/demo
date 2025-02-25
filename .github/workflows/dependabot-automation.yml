@@ -1,10 +1,8 @@
 name: Dependabot Automation
-on:
-  workflow_run:
-    workflows: ["CI"]
-    types: 
-      - completed
-    
+on: 
+  pull_request_target:
+    branches: [ main ]
+
 permissions:
   contents: write
   pull-requests: write
@@ -12,7 +10,7 @@ permissions:
 jobs:
   dependabot-autoapprove:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Dependabot metadata
         id: metadata
@@ -30,7 +28,6 @@ jobs:
         run: |
           gh label create "Dependabot-Approved" --description "Approved by Dependabot Automation" --color "#0E8A16" --repo "${{ github.repository }}" || echo "Dependabot-Approved label already exists"
           gh pr edit "$PR_URL" --add-label "Dependabot-Approved"
-          gh pr merge "$PR_URL" --auto --squash
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}

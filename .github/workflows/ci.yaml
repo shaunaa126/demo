@@ -12,3 +12,10 @@ jobs:
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - run: echo "PR created by Dependabot"
+      - name: Add a label for all approved dependencies
+        if: success()
+        run: |
+            gh pr merge "$PR_URL" --auto --squash
+        env:
+            PR_URL: ${{github.event.pull_request.html_url}}
+            GH_TOKEN: ${{secrets.GH_TOKEN}}
