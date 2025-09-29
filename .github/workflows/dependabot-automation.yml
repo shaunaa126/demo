@@ -32,7 +32,7 @@ jobs:
       - name: Check if all checks passed
         if: ${{ success() && steps.approval.outcome != 'skipped' }}
         id: checkspassed
-        uses: wechuli/allcheckspassed@v1
+        uses: wechuli/allcheckspassed@v2
       - name: Enable auto-merge
         if: ${{ success() && steps.approval.outcome != 'skipped' }}
         run: |
